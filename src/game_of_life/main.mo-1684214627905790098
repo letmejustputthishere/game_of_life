@@ -2,6 +2,13 @@ import Iter "mo:stdlib/iter";
 import Debug "mo:stdlib/debug";
 
 actor universe {
+            public query func __dfx_asset_path(path: Text): async Text {
+              switch path {
+                
+                case _ {assert false; ""}
+              }
+            };
+        
     type cell = { #dead; #alive};
     type universe = {
                      width : Nat;
@@ -34,15 +41,7 @@ actor universe {
                 let neighbour_col = (column + delta_col) % universe.width;
                 let idx = await get_index(neighbour_row, neighbour_col);
 
-                
-                switch (universe.cells[idx])   {
-                    case (#alive){
-                        count += 1;
-                    };
-                    case (#dead){
-                        count += 0;
-                    };
-                };           
+                count += if(universe.cells[idx]) 1 else 0;
                 Debug.print(debug_show(count));
             };
         };
