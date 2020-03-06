@@ -49,7 +49,7 @@ actor universe {
     };
 
     func tick(): universe {
-        var old_universe = universe;
+        var old_universe := universe;
         for (row in Iter.range(0,old_universe.height-1 )){
             for (col in Iter.range(0,old_universe.width-1)){
                 let idx = get_index(row,col);
