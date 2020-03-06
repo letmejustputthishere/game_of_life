@@ -48,12 +48,13 @@ actor universe {
         return count;
     };
 
-    func tick(): (){
-        for (row in Iter.range(0,universe.height-1 )){
-            for (col in Iter.range(0,universe.width-1)){
+    func tick(): universe {
+        var old_universe = universe;
+        for (row in Iter.range(0,old_universe.height-1 )){
+            for (col in Iter.range(0,old_universe.width-1)){
                 let idx = get_index(row,col);
                 let live_neighbours = live_neighbour_count(row,col);
-                switch (universe.cells[idx], live_neighbours){
+                switch (old_universe.cells[idx], live_neighbours){
                     case ((#alive, 2) or (#alive,3)){
                         universe.cells[idx] := #alive;
                     };
@@ -73,6 +74,7 @@ actor universe {
                 };
             };
         };
+        return old_universe;
     };
 
     func draw(): (){
@@ -96,9 +98,42 @@ actor universe {
     };
 
     public func start() : async (){
-        while(true){
-            tick();
+        label draw_loop while(true){
+            var old_universe = tick();
+            Debug.print(debug_show(old_universe));
+            Debug.print(debug_show(universe));
+
+            if (Array_equalsVar<cell>(old_universe.cells, universe.cells, cellEq)){
+                break draw_loop;
+            };
             draw();
         };
+    };
+
+    func Array_equalsVar<A>(
+        a : [var A],
+        b : [var A],
+        eq : (A, A) -> Bool
+    ) : Bool {
+        if (a.len() != b.len()) {
+            return false
+        };
+        var i = 0;
+        while (i < a.len()) {
+            if (not eq(a[i], b[i])) {
+                return false
+            };
+            i += 1
+        };
+        true
+    };
+
+    func cellEq(a : cell, b : cell) : Bool {
+        switch (a, b) {
+            case (#dead, #dead) true;
+            case (#alive, #alive) true;
+            case (#dead, #alive) false;
+            case (#alive, #dead) false;
+        }
     };
 };
