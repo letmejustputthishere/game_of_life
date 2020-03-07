@@ -7,13 +7,13 @@ actor universe {
     type universe = {
                      width : Nat;
                      height : Nat;
-                     cells : [var cell] 
+                     var cells : [var cell] 
                      };
  
     let universe : universe ={
         width = 4;
         height = 4;
-        cells = [var 
+        var cells = [var 
                 #dead, #alive, #alive, #dead,
                 #dead, #alive, #alive, #alive,
                 #dead, #dead, #dead, #dead,
@@ -27,59 +27,115 @@ actor universe {
         return index;
     };
 
-    func live_neighbour_count(column : Nat, row : Nat) : Nat{
+    func get_row(index : Nat) : Nat{
+        let row : Nat = index / universe.width;
+        return row; 
+    };
+
+    func get_column(index : Nat) : Nat{
+        let col : Nat = index % universe.height;
+        return col;
+    };
+
+    func get_count(idx : Nat) : Nat{
         var count = 0;
-        label outer for (delta_row in Iter.range(0,universe.height-1)){
-            label inner for (delta_col in Iter.range(0,universe.width-1)){
-                if (delta_col == 0 and delta_row == 0) continue inner;
-                let neighbour_row = (row +delta_row) % universe.height;
-                let neighbour_col = (column + delta_col) % universe.width;
-                let idx = get_index(neighbour_row, neighbour_col);
-                
-                switch (universe.cells[idx])   {
-                    case (#alive){
-                        count += 1;
-                    };
-                    case (#dead){
-                        count += 0;
-                    };
-                };           
+        switch (universe.cells[idx])   {
+            case (#alive){
+                count += 1;
+            };
+            case (#dead){
+                count += 0;
             };
         };
+        return count;          
+    };
+
+    func live_neighbour_count(row : Nat, column: Nat) : Nat{
+        var count = 0;
+
+        let north = if (row == 0) {
+            universe.height - 1
+        } else {
+            row - 1
+        };
+
+        let south = if (row == universe.height - 1) {
+            0
+        } else {
+            row + 1
+        };
+
+        let west = if (column == 0) {
+            universe.width - 1
+        } else {
+            column - 1
+        };
+
+        let east = if (column == universe.width - 1) {
+            0
+        } else {
+            column + 1
+        };
+
+        let nw = get_index(north, west);
+        count += get_count(nw);
+
+        let n = get_index(north, column);
+        count += get_count(n);
+
+        let ne = get_index(north, east);
+        count += get_count(ne);
+
+        let w = get_index(row, west);
+        count += get_count(w);
+
+        let e = get_index(row, east);
+        count += get_count(e);
+
+        let sw = get_index(south, west);
+        count += get_count(sw);
+
+        let s = get_index(south, column);
+        count += get_count(s);
+
+        let se = get_index(south, east);
+        count += get_count(se);
+
         return count;
     };
 
-    func tick(): universe {
-        let old_universe = universe;
-        for (row in Iter.range(0,old_universe.height-1 )){
-            for (col in Iter.range(0,old_universe.width-1)){
-                let idx = get_index(row,col);
-                let live_neighbours = live_neighbour_count(row,col);
-                switch (old_universe.cells[idx], live_neighbours){
-                    case ((#alive, 2) or (#alive,3)){
-                        universe.cells[idx] := #alive;
-                    };
-                    case (#alive, x){
-                        if (x < 2){
-                            universe.cells[idx] := #dead;
-                        }else{
-                            universe.cells[idx] := #dead;
-                        }
-                    };
-                    case (#dead, 3){
-                        universe.cells[idx] := #alive;
-                    };
-                    case (otherwise, _){
-                        universe.cells[idx] := otherwise;
-                    };
+    func tick(): [var cell] {
+        var old_universe_cells = Array.tabulateVar<cell>(universe.width*universe.height, func(index:Nat){
+            universe.cells[index]
+        });
+        universe.cells := Array.tabulateVar<cell>((universe.width*universe.height), func(index : Nat){
+            let row = get_row(index);
+            let col = get_column(index);
+            let live_neighbours = live_neighbour_count(row,col);
+            let new_state = switch (old_universe_cells[index], live_neighbours){
+                case ((#alive, 2) or (#alive, 3)){
+                    #alive;
+                };
+                case (#alive, x){
+                    if (x < 2){
+                        #dead;
+                    }else{
+                        #dead;
+                    }
+                };
+                case (#dead, 3){
+                    #alive;
+                };
+                case (otherwise, _){
+                    otherwise;
                 };
             };
-        };
-        return old_universe;
+        });
+        return old_universe_cells;
     };
 
     func draw(): (){
-        var output : Text = "\n____\n\n";
+        var output : Text = "\n  ____\n";
         for (row in Iter.range(0,universe.height-1)){
             var temp : Text = "| ";
             for (col in Iter.range(0,universe.width-1)){
@@ -95,16 +151,16 @@ actor universe {
             };
             output #= temp # " |\n";
         };
-        Debug.print(output#"\n____");
+        Debug.print(output#"  ____");
     };
 
     public func start() : async (){
         label draw_loop while(true){
-            var old_universe = tick();
-            Debug.print(debug_show(old_universe));
-            Debug.print(debug_show(universe));
+            let old_universe_cells = tick();
+            Debug.print(debug_show(old_universe_cells));
+            Debug.print(debug_show(universe.cells));
 
-            if (Array_equalsVar<cell>(old_universe.cells, universe.cells, cellEq)){
+            if (Array_equalsVar<cell>(old_universe_cells, universe.cells, cellEq)){
                 break draw_loop;
             };
             draw();
@@ -137,4 +193,7 @@ actor universe {
             case (#alive, #dead) false;
         }
     };
+
+    
+    
 };
