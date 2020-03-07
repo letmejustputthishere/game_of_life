@@ -1,5 +1,6 @@
 import Iter "mo:stdlib/iter";
 import Debug "mo:stdlib/debug";
+import Array "mo:stdlib/array";
 
 actor universe {
     type cell = { #dead; #alive};
@@ -8,8 +9,8 @@ actor universe {
                      height : Nat;
                      cells : [var cell] 
                      };
-
-    var universe : universe ={
+ 
+    let universe : universe ={
         width = 4;
         height = 4;
         cells = [var 
@@ -49,7 +50,7 @@ actor universe {
     };
 
     func tick(): universe {
-        var old_universe = universe;
+        let old_universe = universe;
         for (row in Iter.range(0,old_universe.height-1 )){
             for (col in Iter.range(0,old_universe.width-1)){
                 let idx = get_index(row,col);
