@@ -11,9 +11,9 @@ actor universe {
                      };
  
     let universe : universe ={
-        width = 16;
-        height = 16;
-        var cells = Array.tabulateVar<cell>(16*16, func(index : Nat){
+        width = 64;
+        height = 64;
+        var cells = Array.tabulateVar<cell>(64*64, func(index : Nat){
             if ((index % 2 == 0) or (index % 7 == 0)){
                 #alive
             }else{
@@ -116,11 +116,7 @@ actor universe {
                     #alive;
                 };
                 case (#alive, x){
-                    if (x < 2){
-                        #dead;
-                    }else{
-                        #dead;
-                    }
+                    #dead;
                 };
                 case (#dead, 3){
                     #alive;
@@ -156,8 +152,6 @@ actor universe {
     public func start() : async (){
         label draw_loop while(true){
             let old_universe_cells = tick();
-            Debug.print(debug_show(old_universe_cells));
-            Debug.print(debug_show(universe.cells));
 
             if (Array_equalsVar<cell>(old_universe_cells, universe.cells, cellEq)){
                 break draw_loop;
