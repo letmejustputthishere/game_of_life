@@ -25,7 +25,6 @@ actor universe {
                 #dead
             }
         } );        
-        Debug.print(debug_show(universe.cells));
     };
 
     func get_index(row : Nat, column : Nat) : Nat {
