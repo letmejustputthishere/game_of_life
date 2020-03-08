@@ -3,17 +3,24 @@ import Debug "mo:stdlib/debug";
 import Array "mo:stdlib/array";
 
 actor universe {
+            public query func __dfx_asset_path(path: Text): async Text {
+              switch path {
+                
+                case _ {assert false; ""}
+              }
+            };
+        
     type cell = { #dead; #alive};
     type universe = {
                      var width : Nat;
                      var height : Nat;
-                     var cells : [var cell];
+                     var cells : [var cell] 
                      };
  
     let universe : universe ={
-        var width : Nat = 0;
-        var height : Nat = 0;
-        var cells : [var cell] = [var]  };
+        var width = 1;
+        var height = 1;
+        var cells = [var {#dead}]  };
 
     public func populate(width : Nat, height : Nat): async (){
         universe.width := width;
