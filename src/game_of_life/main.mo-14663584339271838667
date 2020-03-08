@@ -3,6 +3,13 @@ import Debug "mo:stdlib/debug";
 import Array "mo:stdlib/array";
 
 actor universe {
+            public query func __dfx_asset_path(path: Text): async Text {
+              switch path {
+                
+                case _ {assert false; ""}
+              }
+            };
+        
     type cell = { #dead; #alive};
     type universe = {
                      width : Nat;
@@ -11,15 +18,17 @@ actor universe {
                      };
  
     let universe : universe ={
-        width = 64;
-        height = 64;
-        var cells = Array.tabulateVar<cell>(64*64, func(index : Nat){
+        width = 4;
+        height = 4;
+        var cells = Array.tabulateVar<cell>(universe.width*universe.height, func(index : Nat){
             if ((index % 2 == 0) or (index % 7 == 0)){
                 #alive
             }else{
                 #dead
             }
+
         } );   };
+
 
     func get_index(row : Nat, column : Nat) : Nat {
         let index :Nat = row * universe.width + column;
@@ -116,7 +125,11 @@ actor universe {
                     #alive;
                 };
                 case (#alive, x){
-                    #dead;
+                    if (x < 2){
+                        #dead;
+                    }else{
+                        #dead;
+                    }
                 };
                 case (#dead, 3){
                     #alive;
@@ -152,6 +165,8 @@ actor universe {
     public func start() : async (){
         label draw_loop while(true){
             let old_universe_cells = tick();
+            Debug.print(debug_show(old_universe_cells));
+            Debug.print(debug_show(universe.cells));
 
             if (Array_equalsVar<cell>(old_universe_cells, universe.cells, cellEq)){
                 break draw_loop;

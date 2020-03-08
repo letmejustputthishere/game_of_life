@@ -2,7 +2,7 @@
   "canisters": {
     "game_of_life": {
       "frontend": {
-        "entrypoint": "src/game_of_life/public/index.js"
+        "entrypoint": "src/game_of_life/public/index.jsx"
       },
       "main": "src/game_of_life/main.mo"
     }
