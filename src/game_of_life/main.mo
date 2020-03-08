@@ -186,7 +186,4 @@ actor universe {
             case (#alive, #dead) false;
         }
     };
-
-    
-    
 };
