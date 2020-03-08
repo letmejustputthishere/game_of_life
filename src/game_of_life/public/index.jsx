@@ -20,18 +20,40 @@ class MyHello extends React.Component {
     this.setState({ ...this.state, name: ev.target.value });
   }
 
+  componentDidMount() {
+    const canvas = this.refs.canvas
+    const ctx = canvas.getContext("2d")
+    ctx.fillStyle = "#FF0000"
+    ctx.fillRect(0, 0, 80, 80)
+  }
+
   render() {
     return (
-      <div style={{ "font-size": "30px" }}>
-        <div style={{ "background-color": "yellow" }}>
-          <p>Greetings, from DFINITY!</p>
-          <p> Type your message in the Name input field, then click <b> Get Greeting</b> to display the result.</p>
-        </div>
-        <div style={{ "margin": "30px" }}>
-          <input id="name" value={this.state.name} onChange={ev => this.onNameChange(ev)}></input>
-          <button onClick={() => this.doGreet()}>Get Greeting!</button>
-        </div>
-        <div>Greeting is: "<span style={{ "color": "blue" }}>{this.state.message}</span>"</div>
+      // <body style={
+      //   { "position": "absolute" },
+      //   { "top": "0" },
+      //   { "left": "0" },
+      //   { "width": "100 %" },
+      //   { "height": "100 %" },
+      //   { "display": "flex" },
+      //   { "flex-direction": "column" },
+      //   { "align-items": "center" },
+      //   { "justify-content": "center" }}>
+      //   <canvas id="game-of-life-canvas"></canvas>
+      //   <div style={{ "font-size": "30px" }}>
+      //     <div style={{ "background-color": "yellow" }}>
+      //       <p>Greetings, from DFINITY!</p>
+      //       <p> Type your message in the Name input field, then click <b> Get Greeting</b> to display the result.</p>
+      //     </div>
+      //     <div style={{ "margin": "30px" }}>
+      //       <input id="name" value={this.state.name} onChange={ev => this.onNameChange(ev)}></input>
+      //       <button onClick={() => this.doGreet()}>Get Greeting!</button>
+      //     </div>
+      //     <div>Greeting is: "<span style={{ "color": "blue" }}>{this.state.message}</span>"</div>
+      //   </div>
+      // </body>
+      <div>
+        <canvas ref="canvas" width={640} height={425} />
       </div>
     );
   }
