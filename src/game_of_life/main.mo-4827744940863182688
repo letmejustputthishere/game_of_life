@@ -3,6 +3,13 @@ import Debug "mo:stdlib/debug";
 import Array "mo:stdlib/array";
 
 actor universe {
+            public query func __dfx_asset_path(path: Text): async Text {
+              switch path {
+                
+                case _ {assert false; ""}
+              }
+            };
+        
     type cell = { #dead; #alive};
     type universe = {
                      var width : Nat;
@@ -21,17 +28,16 @@ actor universe {
             }
         } );   };
 
-    public func populate(width : Nat, height : Nat): async (){
+    func populate(width : Nat, height : Nat){
         universe.width := width;
         universe.height := height;
-        universe.cells := Array.tabulateVar<cell>(width*height,func(index: Nat){
+        universe.cells := Array.tabulate<cell>(width*height,func(index: Nat){
             if ((index % 2 == 0) or (index % 7 == 0)){
                 #alive
             }else{
                 #dead
             }
         } );        
-        Debug.print(debug_show(universe.cells));
     };
 
     func get_index(row : Nat, column : Nat) : Nat {
