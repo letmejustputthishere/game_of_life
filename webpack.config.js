@@ -5,7 +5,7 @@ const dfxJson = require("./dfx.json");
 // List of all aliases for canisters. This creates the module alias for
 // the `import ... from "ic:canisters/xyz"` where xyz is the name of a
 // canister.
-const aliases = Object.entries(dfxJson.canisters).reduce((acc, [name,value]) => {
+const aliases = Object.entries(dfxJson.canisters).reduce((acc, [name, value]) => {
   const outputRoot = path.join(__dirname, dfxJson.defaults.build.output, name);
   const filename = path.basename(value.main, ".mo");
   return {
@@ -19,7 +19,7 @@ const aliases = Object.entries(dfxJson.canisters).reduce((acc, [name,value]) => 
     process.env["HOME"],
     ".cache/dfinity/versions",
     dfxJson.dfx || process.env["DFX_VERSION"],
-    "js-user-library/dist/lib.prod.js",
+    "js-user-library/",
   ),
 });
 
@@ -38,7 +38,6 @@ function generateWebpackConfigForCanister(name, info) {
     mode: "production",
     entry: {
       index: path.join(inputRoot, info.frontend.entrypoint),
-      candid: path.join(outputRoot, 'candid.js'),
     },
     devtool: "source-map",
     optimization: {
@@ -53,9 +52,9 @@ function generateWebpackConfigForCanister(name, info) {
       path: path.join(outputRoot, "assets"),
     },
     module: {
-        rules: [
-            { test: /\.(js|ts)x?$/, loader: "ts-loader" }
-        ] 
+      rules: [
+        { test: /\.(js|ts)x?$/, loader: "ts-loader" }
+      ]
     },
     plugins: [
     ],

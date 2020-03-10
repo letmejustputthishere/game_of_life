@@ -6,26 +6,27 @@ class MyHello extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: 'Name',
-      message: '',
     };
   }
 
-  async doGreet() {
-    const greeting = await custom_greeting.greet(this.state.name);
-    this.setState({ ...this.state, message: greeting });
+  async doPopulate() {
+    let width = document.getElementById("newEntryWidth").value;
+    let height = document.getElementById("newEntryHeight").value;
+
+    game_of_life.populate(parseInt(width, 10), parseInt(height, 10));
   }
 
-  onNameChange(ev) {
-    this.setState({ ...this.state, name: ev.target.value });
+  async doStart() {
+    game_of_life.start();
   }
 
-  componentDidMount() {
-    const canvas = this.refs.canvas
-    const ctx = canvas.getContext("2d")
-    ctx.fillStyle = "#FF0000"
-    ctx.fillRect(0, 0, 80, 80)
-  }
+
+  // componentDidMount() {
+  //   const canvas = this.refs.canvas
+  //   const ctx = canvas.getContext("2d")
+  //   ctx.fillStyle = "#FF0000"
+  //   ctx.fillRect(0, 0, 80, 80)
+  // }
 
   render() {
     return (
@@ -53,8 +54,24 @@ class MyHello extends React.Component {
       //   </div>
       // </body>
       <div>
-        <canvas ref="canvas" width={640} height={425} />
+        <h1>Game of Life</h1>
+        <div>
+          Populate the universe:
+          <table>
+            <tr><td>Width:</td><td><input id="newEntryWidth"></input></td></tr>
+            <tr><td>Height:</td><td><input id="newEntryHeight"></input></td></tr>
+          </table>
+          <button onClick={() => this.doPopulate()}>Populate</button>
+        </div>
+        <div>
+          Start the game:<button onClick={
+            () => this.doStart()
+          }>Start</button>
+        </div>
       </div>
+      // <div>
+      // <canvas ref="canvas" width={640} height={425} />
+      // </div> 
     );
   }
 }
