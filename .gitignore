@@ -15,3 +15,6 @@ canisters/
 
 # frontend code
 node_modules/
+
+# temporary motoko files
+src/game_of_life/*.mo-*
