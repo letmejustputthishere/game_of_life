@@ -134,7 +134,7 @@ actor universe {
         return count;
     };
 
-    func tick(): [cell] {
+    public func tick(): async [cell] {
         var old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
             universe.cells[index]
         });
@@ -157,7 +157,7 @@ actor universe {
                 };
             };
         });
-        return old_universe_cells;
+        return universe.cells;
     };
 
     func draw(): (){
@@ -181,12 +181,13 @@ actor universe {
     };
 
     public func start() : async (){
+            var old_universe_cells : [cell] = universe.cells;
         label draw_loop while(true){
-            let old_universe_cells = tick();
-
-            if (Array.equals<cell>(old_universe_cells, universe.cells, cellEq)){
+            var temp = await tick();
+            if (Array.equals<cell>(old_universe_cells, temp, cellEq)){
                 break draw_loop;
             };
+            old_universe_cells := temp;
             draw();
         };
     };
