@@ -22,34 +22,20 @@ class MyHello extends React.Component {
 
   async doRender() {
     const pre = document.getElementById("game-of-life-canvas");
-    const renderLoop = () => {
-      pre.textContent = game_of_life.render();
-      universe.tick();
+    const renderLoop = async () => {
+      pre.textContent = await game_of_life.render();
+      game_of_life.tick();
 
       requestAnimationFrame(renderLoop);
     };
+    requestAnimationFrame(renderLoop);
   }
 
 
-  componentDidMount() {
-    const canvas = this.refs.canvas
-    const ctx = canvas.getContext("2d")
-    ctx.fillStyle = "#FF0000"
-    ctx.fillRect(0, 0, 80, 80)
-  }
 
   render() {
     return (
-      <body style={
-        { "position": "absolute" },
-        { "top": "0" },
-        { "left": "0" },
-        { "width": "100 %" },
-        { "height": "100 %" },
-        { "display": "flex" },
-        { "flex-direction": "column" },
-        { "align-items": "center" },
-        { "justify-content": "center" }}>
+      <body >
         <div>
           <h1>Game of Life</h1>
           <div>
@@ -66,10 +52,23 @@ class MyHello extends React.Component {
             }>Start</button>
           </div>
         </div>
-        <div >
-          <canvas ref="canvas" width={640} height={425} />
+        <div style={
+          { "position": "absolute" },
+          { "top": "0" },
+          { "left": "0" },
+          { "width": "100 %" },
+          { "height": "100 %" },
+          { "display": "flex" },
+          { "flex-direction": "column" },
+          { "align-items": "center" },
+          { "justify-content": "center" }}>
+          <pre id="game-of-life-canvas"></pre>
         </div>
-        <pre> id="game-of-life-canvas"</pre>
+        <div>
+          Draw Matrix:<button onClick={
+            () => this.doRender()
+          }>Render</button>
+        </div>
       </body>
     );
   }
