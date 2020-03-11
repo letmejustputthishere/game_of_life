@@ -7,18 +7,18 @@ actor universe {
     type universe = {
                      var width : Nat;
                      var height : Nat;
-                     var cells : [var cell];
+                     var cells : [cell];
                      };
  
     let universe : universe ={
         var width : Nat = 0;
         var height : Nat = 0;
-        var cells : [var cell] = [var]  };
+        var cells : [cell] = []  };
 
     public func populate(width : Nat, height : Nat): async (){
         universe.width := width;
         universe.height := height;
-        universe.cells := Array.tabulateVar<cell>(width*height,func(index: Nat){
+        universe.cells := Array.tabulate<cell>(width*height,func(index: Nat){
             if ((index % 2 == 0) or (index % 7 == 0)){
                 #alive
             }else{
@@ -134,11 +134,11 @@ actor universe {
         return count;
     };
 
-    func tick(): [var cell] {
-        var old_universe_cells = Array.tabulateVar<cell>(universe.width*universe.height, func(index:Nat){
+    func tick(): [cell] {
+        var old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
             universe.cells[index]
         });
-        universe.cells := Array.tabulateVar<cell>((universe.width*universe.height), func(index : Nat){
+        universe.cells := Array.tabulate<cell>((universe.width*universe.height), func(index : Nat){
             let row = get_row(index);
             let col = get_column(index);
             let live_neighbours = live_neighbour_count(row,col);
@@ -184,29 +184,11 @@ actor universe {
         label draw_loop while(true){
             let old_universe_cells = tick();
 
-            if (Array_equalsVar<cell>(old_universe_cells, universe.cells, cellEq)){
+            if (Array.equals<cell>(old_universe_cells, universe.cells, cellEq)){
                 break draw_loop;
             };
             draw();
         };
-    };
-
-    func Array_equalsVar<A>(
-        a : [var A],
-        b : [var A],
-        eq : (A, A) -> Bool
-    ) : Bool {
-        if (a.len() != b.len()) {
-            return false
-        };
-        var i = 0;
-        while (i < a.len()) {
-            if (not eq(a[i], b[i])) {
-                return false
-            };
-            i += 1
-        };
-        true
     };
 
     func cellEq(a : cell, b : cell) : Bool {
