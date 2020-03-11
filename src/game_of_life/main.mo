@@ -192,6 +192,13 @@ actor universe {
         };
     };
 
+    public query func get_width(): async Nat{
+        return universe.width;
+    };
+    public query func get_height(): async Nat{
+        return universe.height;
+    };
+
     func cellEq(a : cell, b : cell) : Bool {
         switch (a, b) {
             case (#dead, #dead) true;

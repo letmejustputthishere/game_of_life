@@ -16,6 +16,11 @@ class MyHello extends React.Component {
     game_of_life.populate(parseInt(width, 10), parseInt(height, 10));
   }
 
+  async getUniverse() {
+
+    document.getElementById("newEntryWidth").value = parseInt(await game_of_life.get_width(), 10);
+    document.getElementById("newEntryHeight").value = parseInt(await game_of_life.get_height(), 10);
+  }
   async doStart() {
     game_of_life.start();
   }
@@ -29,6 +34,12 @@ class MyHello extends React.Component {
       requestAnimationFrame(renderLoop);
     };
     requestAnimationFrame(renderLoop);
+  }
+
+  async renderCurrent() {
+    const pre = document.getElementById("game-of-life-canvas");
+    pre.textContent = await game_of_life.render();
+    requestAnimationFrame(pre.textContent);
   }
 
 
@@ -45,6 +56,7 @@ class MyHello extends React.Component {
               <tr><td>Height:</td><td><input id="newEntryHeight"></input></td></tr>
             </table>
             <button onClick={() => this.doPopulate()}>Populate</button>
+            <button onClick={() => this.getUniverse()}>Get Universe</button>
           </div>
           <div>
             Start the game:<button onClick={
@@ -68,6 +80,9 @@ class MyHello extends React.Component {
           Draw Matrix:<button onClick={
             () => this.doRender()
           }>Render</button>
+          <button onClick={
+            () => this.renderCurrent()
+          }>Render Current</button>
         </div>
       </body>
     );
