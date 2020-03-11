@@ -27,6 +27,31 @@ actor universe {
         } );        
     };
 
+    public func render() : async Text{
+        var output : Text = "";
+        var current_row: Nat = 0;
+
+        for (index in Iter.range(0,universe.cells.len()-1)){
+            
+            switch (universe.cells[index]){
+                case (#dead){
+                    output #= "◻";
+                };
+                case (#alive){
+                    output #= "◼";
+                };
+            };
+
+            if (get_row(index) > current_row){
+                output #= "\n";
+                current_row += 1;
+            };
+        };
+
+        return output;
+    };
+
+
     func get_index(row : Nat, column : Nat) : Nat {
         let index :Nat = row * universe.width + column;
         return index;
