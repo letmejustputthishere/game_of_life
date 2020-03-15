@@ -28,11 +28,15 @@ actor universe {
     };
 
     public func render() : async Text{
-        var output : Text = "";
+        var output : Text = "\n";
         var current_row: Nat = 0;
 
         for (index in Iter.range(0,universe.cells.len()-1)){
             
+            if (get_row(index) > current_row){
+                output #= "\n";
+                current_row += 1;
+            };
             switch (universe.cells[index]){
                 case (#dead){
                     output #= "◻";
@@ -42,10 +46,6 @@ actor universe {
                 };
             };
 
-            if (get_row(index) > current_row){
-                output #= "\n";
-                current_row += 1;
-            };
         };
 
         return output;
@@ -132,6 +132,9 @@ actor universe {
         count += get_count(se);
 
         return count;
+    };
+    public query func get_universe(): async [cell]{
+        return universe.cells;
     };
 
     public func tick(): async [cell] {

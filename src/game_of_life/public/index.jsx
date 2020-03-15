@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 class MyHello extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = { 
     };
   }
 
@@ -25,28 +25,45 @@ class MyHello extends React.Component {
     game_of_life.start();
   }
 
-  async doRender() {
+  
+  async renderLoop () {
     const pre = document.getElementById("game-of-life-canvas");
-    const renderLoop = async () => {
-      pre.textContent = await game_of_life.render();
-      game_of_life.tick();
-
-      requestAnimationFrame(renderLoop);
+    pre.textContent = await game_of_life.render();
+      let old_universe = game_of_life.get_universe();
+      let temp = game_of_life.tick();
+      var requestId = requestAnimationFrame(renderLoop);
+      if (old_universe === temp){
+        cancelAnimationFrame(requestId)
+      }
+      old_universe = temp;
     };
+
+  async startRender(){
     requestAnimationFrame(renderLoop);
+  }
+  async stopRender(){
+    cancelAnimationFrame(renderLoop);
   }
 
   async renderCurrent() {
     const pre = document.getElementById("game-of-life-canvas");
     pre.textContent = await game_of_life.render();
-    requestAnimationFrame(pre.textContent);
   }
 
 
 
   render() {
     return (
-      <body >
+      <body style={
+          { "position": "absolute" },
+          { "top": "0" },
+          { "left": "0" },
+          { "width": "100 %" },
+          { "height": "100 %" },
+          { "display": "flex" },
+          { "flex-direction": "column" },
+          { "align-items": "center" },
+          { "justify-content": "center" }}>
         <div>
           <h1>Game of Life</h1>
           <div>
@@ -64,22 +81,16 @@ class MyHello extends React.Component {
             }>Start</button>
           </div>
         </div>
-        <div style={
-          { "position": "absolute" },
-          { "top": "0" },
-          { "left": "0" },
-          { "width": "100 %" },
-          { "height": "100 %" },
-          { "display": "flex" },
-          { "flex-direction": "column" },
-          { "align-items": "center" },
-          { "justify-content": "center" }}>
+        <div >
           <pre id="game-of-life-canvas"></pre>
         </div>
         <div>
           Draw Matrix:<button onClick={
-            () => this.doRender()
+            () => this.renderLoop()
           }>Render</button>
+          <button onClick={
+            () => this.stopRender()
+          }>Stop Render</button>
           <button onClick={
             () => this.renderCurrent()
           }>Render Current</button>
