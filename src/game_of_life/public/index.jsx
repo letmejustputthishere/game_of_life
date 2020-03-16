@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 class MyHello extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
     };
   }
 
@@ -25,24 +25,24 @@ class MyHello extends React.Component {
     game_of_life.start();
   }
 
-  
-  async renderLoop () {
+  async doRender() {
     const pre = document.getElementById("game-of-life-canvas");
-    pre.textContent = await game_of_life.render();
-      let old_universe = game_of_life.get_universe();
-      let temp = game_of_life.tick();
-      var requestId = requestAnimationFrame(renderLoop);
-      if (old_universe === temp){
-        cancelAnimationFrame(requestId)
-      }
-      old_universe = temp;
+    const renderLoop = async () => {
+      pre.textContent = await game_of_life.render();
+      let old_universe = await game_of_life.get_universe();
+      let temp = await game_of_life.tick();
+      this.reqId = requestAnimationFrame(renderLoop);
+      if (JSON.stringify(old_universe) == JSON.stringify(temp)) {
+        console.log("match");
+        cancelAnimationFrame(this.reqId);
+      };
     };
-
-  async startRender(){
     requestAnimationFrame(renderLoop);
   }
-  async stopRender(){
-    cancelAnimationFrame(renderLoop);
+
+  async stopRender() {
+    console.log(this.reqId);
+    cancelAnimationFrame(this.reqId);
   }
 
   async renderCurrent() {
@@ -50,20 +50,9 @@ class MyHello extends React.Component {
     pre.textContent = await game_of_life.render();
   }
 
-
-
   render() {
     return (
-      <body style={
-          { "position": "absolute" },
-          { "top": "0" },
-          { "left": "0" },
-          { "width": "100 %" },
-          { "height": "100 %" },
-          { "display": "flex" },
-          { "flex-direction": "column" },
-          { "align-items": "center" },
-          { "justify-content": "center" }}>
+      <body>
         <div>
           <h1>Game of Life</h1>
           <div>
@@ -86,7 +75,7 @@ class MyHello extends React.Component {
         </div>
         <div>
           Draw Matrix:<button onClick={
-            () => this.renderLoop()
+            () => this.doRender()
           }>Render</button>
           <button onClick={
             () => this.stopRender()
