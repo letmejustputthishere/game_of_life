@@ -5,6 +5,7 @@ import { render } from 'react-dom'
 class MyHello extends React.Component {
   constructor(props) {
     super(props)
+    this.stopped = false
     this.state = {
     }
   }
@@ -32,17 +33,20 @@ class MyHello extends React.Component {
       let old_universe = await game_of_life.get_universe();
       let temp = await game_of_life.tick();
       this.reqId = requestAnimationFrame(renderLoop);
-      if (JSON.stringify(old_universe) == JSON.stringify(temp)) {
+      if (JSON.stringify(old_universe) == JSON.stringify(temp) || this.stopped == true) {
         console.log("match");
         cancelAnimationFrame(this.reqId);
       }
     };
     requestAnimationFrame(renderLoop);
+    this.stopped = false;
   }
 
   async stopRender() {
     console.log(this.reqId);
-    cancelAnimationFrame(this.reqId);
+    console.log(this.stopped);
+    this.stopped = true;
+    console.log("stopRender: " + this.stopped);
   }
 
   async renderCurrent() {
