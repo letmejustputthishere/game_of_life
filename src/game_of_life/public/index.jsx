@@ -1,12 +1,12 @@
-import game_of_life from 'ic:canisters/game_of_life';
-import * as React from 'react';
-import { render } from 'react-dom';
+import game_of_life from 'ic:canisters/game_of_life'
+import * as React from 'react'
+import { render } from 'react-dom'
 
 class MyHello extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-    };
+    }
   }
 
   async doPopulate() {
@@ -17,10 +17,10 @@ class MyHello extends React.Component {
   }
 
   async getUniverse() {
-
     document.getElementById("newEntryWidth").value = parseInt(await game_of_life.get_width(), 10);
     document.getElementById("newEntryHeight").value = parseInt(await game_of_life.get_height(), 10);
   }
+
   async doStart() {
     game_of_life.start();
   }
@@ -35,7 +35,7 @@ class MyHello extends React.Component {
       if (JSON.stringify(old_universe) == JSON.stringify(temp)) {
         console.log("match");
         cancelAnimationFrame(this.reqId);
-      };
+      }
     };
     requestAnimationFrame(renderLoop);
   }
