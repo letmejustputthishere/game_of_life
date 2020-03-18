@@ -46,6 +46,7 @@ function generateWebpackConfigForCanister(name, info) {
     },
     resolve: {
       alias: aliases,
+      extensions: ['.tsx', '.ts', '.js', '.jsx']
     },
     output: {
       filename: "[name].js",

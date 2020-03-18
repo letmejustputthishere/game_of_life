@@ -7,14 +7,14 @@
     "build": "webpack"
   },
   "devDependencies": {
-    "webpack": "4.41.3",
-    "webpack-cli": "3.3.10",
-    "terser-webpack-plugin": "2.2.2"
-  },
-  "dependencies": {
+    "@types/react": "^16.9.23",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "terser-webpack-plugin": "2.2.2",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.8.3"
-  }
+    "typescript": "^3.8.3",
+    "webpack": "4.41.3",
+    "webpack-cli": "3.3.10"
+  },
+  "dependencies": {}
 }
