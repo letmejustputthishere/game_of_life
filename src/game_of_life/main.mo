@@ -27,7 +27,7 @@ actor universe {
         } );        
     };
 
-    public func render() : async Text{
+    public query func render() : async Text{
         var output : Text = "\n";
         var current_row: Nat = 0;
 
@@ -51,6 +51,54 @@ actor universe {
         return output;
     };
 
+    public query func get_universe(): async [cell]{
+        return universe.cells;
+    };
+
+    public func tick(): async [cell] {
+        var old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
+            universe.cells[index]
+        });
+        universe.cells := Array.tabulate<cell>((universe.width*universe.height), func(index : Nat){
+            let row = get_row(index);
+            let col = get_column(index);
+            let live_neighbours = live_neighbour_count(row,col);
+            let new_state = switch (old_universe_cells[index], live_neighbours){
+                case ((#alive, 2) or (#alive, 3)){
+                    #alive;
+                };
+                case (#alive, x){
+                    #dead;
+                };
+                case (#dead, 3){
+                    #alive;
+                };
+                case (otherwise, _){
+                    otherwise;
+                };
+            };
+        });
+        return universe.cells;
+    };
+
+    public func start() : async (){
+            var old_universe_cells : [cell] = universe.cells;
+        label draw_loop while(true){
+            var temp = await tick();
+            if (Array.equals<cell>(old_universe_cells, temp, cellEq)){
+                break draw_loop;
+            };
+            old_universe_cells := temp;
+            draw();
+        };
+    };
+
+    public query func get_width(): async Nat{
+        return universe.width;
+    };
+    public query func get_height(): async Nat{
+        return universe.height;
+    };
 
     func get_index(row : Nat, column : Nat) : Nat {
         let index :Nat = row * universe.width + column;
@@ -133,35 +181,6 @@ actor universe {
 
         return count;
     };
-    public query func get_universe(): async [cell]{
-        return universe.cells;
-    };
-
-    public func tick(): async [cell] {
-        var old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
-            universe.cells[index]
-        });
-        universe.cells := Array.tabulate<cell>((universe.width*universe.height), func(index : Nat){
-            let row = get_row(index);
-            let col = get_column(index);
-            let live_neighbours = live_neighbour_count(row,col);
-            let new_state = switch (old_universe_cells[index], live_neighbours){
-                case ((#alive, 2) or (#alive, 3)){
-                    #alive;
-                };
-                case (#alive, x){
-                    #dead;
-                };
-                case (#dead, 3){
-                    #alive;
-                };
-                case (otherwise, _){
-                    otherwise;
-                };
-            };
-        });
-        return universe.cells;
-    };
 
     func draw(): (){
         var output : Text = "\n  ____\n";
@@ -181,25 +200,6 @@ actor universe {
             output #= temp # " |\n";
         };
         Debug.print(output#"  ____");
-    };
-
-    public func start() : async (){
-            var old_universe_cells : [cell] = universe.cells;
-        label draw_loop while(true){
-            var temp = await tick();
-            if (Array.equals<cell>(old_universe_cells, temp, cellEq)){
-                break draw_loop;
-            };
-            old_universe_cells := temp;
-            draw();
-        };
-    };
-
-    public query func get_width(): async Nat{
-        return universe.width;
-    };
-    public query func get_height(): async Nat{
-        return universe.height;
     };
 
     func cellEq(a : cell, b : cell) : Bool {
