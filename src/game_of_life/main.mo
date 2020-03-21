@@ -84,7 +84,7 @@ actor universe {
     public func start() : async (){
             var old_universe_cells : [cell] = universe.cells;
         label draw_loop while(true){
-            var temp = await tick();
+            var temp = sync_tick();
             if (Array.equals<cell>(old_universe_cells, temp, cellEq)){
                 break draw_loop;
             };
@@ -98,6 +98,32 @@ actor universe {
     };
     public query func get_height(): async Nat{
         return universe.height;
+    };
+
+    func sync_tick(): [cell] {
+        var old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
+            universe.cells[index]
+        });
+        universe.cells := Array.tabulate<cell>((universe.width*universe.height), func(index : Nat){
+            let row = get_row(index);
+            let col = get_column(index);
+            let live_neighbours = live_neighbour_count(row,col);
+            let new_state = switch (old_universe_cells[index], live_neighbours){
+                case ((#alive, 2) or (#alive, 3)){
+                    #alive;
+                };
+                case (#alive, x){
+                    #dead;
+                };
+                case (#dead, 3){
+                    #alive;
+                };
+                case (otherwise, _){
+                    otherwise;
+                };
+            };
+        });
+        return universe.cells;
     };
 
     func get_index(row : Nat, column : Nat) : Nat {
