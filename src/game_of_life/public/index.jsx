@@ -1,6 +1,7 @@
 import game_of_life from 'ic:canisters/game_of_life'
 import * as React from 'react'
 import { render } from 'react-dom'
+import './gol.css'
 
 class MyHello extends React.Component {
   constructor(props) {
@@ -52,7 +53,7 @@ class MyHello extends React.Component {
 
   render() {
     return (
-      <body>
+      <div className="new-entry">
         <div>
           <h1>Game of Life</h1>
           <div>
@@ -84,7 +85,7 @@ class MyHello extends React.Component {
             () => this.renderCurrent()
           }>Render Current</button>
         </div>
-      </body>
+      </div>
     );
   }
 }
