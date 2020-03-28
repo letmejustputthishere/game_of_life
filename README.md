@@ -34,7 +34,7 @@ dfx canister install --all
 Open the canister frontend in your web browser.
 
 ```bash
-ID=$(xxd -u -p canisters/linkedup/_canister.id)
+ID=$(xxd -u -p canisters/game_of_life/_canister.id)
 CRC=$(python2 -c "import crc8;h=crc8.crc8();h.update('$ID'.decode('hex'));print(h.hexdigest())")
 xdg-open "http://127.0.0.1:8000/?canisterId=ic:$ID$CRC"
 ```
