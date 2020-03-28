@@ -17,6 +17,6 @@
       "serve_root": "canisters/game_of_life/assets"
     }
   },
-  "dfx": "0.5.3",
+  "dfx": "0.5.4",
   "version": 1
 }
