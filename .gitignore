@@ -21,3 +21,6 @@ src/game_of_life/*.mo-*
 
 #eslint
 .eslintrc.json
+
+#others
+crc8.pyc

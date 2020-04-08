@@ -1,8 +1,5 @@
 # game_of_life
 
-Welcome to your new game_of_life project and to the internet computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
-
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
 
 To learn more before you start working with game_of_life, see the following documentation available online:
 
@@ -16,4 +13,28 @@ If you want to start working on your project right away, you might want to try t
 cd game_of_life/
 dfx help
 dfx config --help
+```
+
+### Demo
+
+Install the required Node modules (only needed the first time).
+
+```bash
+npm install
+```
+
+Start the replica, then build and install the canisters.
+
+```bash
+dfx start --background
+dfx build
+dfx canister install --all
+```
+
+Open the canister frontend in your web browser.
+
+```bash
+ID=$(xxd -u -p canisters/game_of_life/_canister.id)
+CRC=$(python2 -c "import crc8;h=crc8.crc8();h.update('$ID'.decode('hex'));print(h.hexdigest())")
+xdg-open "http://127.0.0.1:8000/?canisterId=ic:$ID$CRC"
 ```
