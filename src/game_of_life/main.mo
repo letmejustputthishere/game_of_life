@@ -1,6 +1,6 @@
-import Iter "mo:stdlib/iter";
-import Debug "mo:stdlib/debug";
-import Array "mo:stdlib/array";
+import Iter "mo:base/Iter";
+import Debug "mo:base/Debug";
+import Array "mo:base/Array";
 
 actor universe {
     type cell = { #dead; #alive};
