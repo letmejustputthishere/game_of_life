@@ -31,7 +31,7 @@ actor universe {
     public func populate(width : Nat, height : Nat): async (){
         universe.width := width;
         universe.height := height;
-        // with this we will the array with values, those values are the 
+        // with this we will populate the array with values, those values are the 
         // variants we declared above
         universe.cells := Array.tabulate<cell>(width*height,func(index: Nat){
             if ((index % 2 == 0) or (index % 7 == 0)){
@@ -42,6 +42,9 @@ actor universe {
         } );        
     };
 
+    // this renders the current state of the universe to a formatted string
+    // it is asynchronous as it doesn't alter the canisters state
+    // only internal state is modified
     public query func render() : async Text{
         var output : Text = "\n";
         var current_row: Nat = 0;
@@ -66,18 +69,28 @@ actor universe {
         return output;
     };
 
+    // return the cells array
     public query func get_universe(): async [cell]{
         return universe.cells;
     };
 
+    // asynchronous tick, this alters the canisters state
     public func tick(): async [cell] {
+        // we safe the old universe so we can  operate on it
         var old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
             universe.cells[index]
         });
+        // here we create the universe after the tick
+        // tabulate takes the length n of the new array and 
+        // a function that describes how to populate it.
+        // this function will be fed the indices 0...n-1
         universe.cells := Array.tabulate<cell>((universe.width*universe.height), func(index : Nat){
             let row = get_row(index);
             let col = get_column(index);
             let live_neighbours = live_neighbour_count(row,col);
+            // those are basically the game of life rules written in code.
+            // here it is decided wheter a cell will be dead or alive after the
+            // tick
             let new_state = switch (old_universe_cells[index], live_neighbours){
                 case ((#alive, 2) or (#alive, 3)){
                     #alive;
@@ -96,7 +109,9 @@ actor universe {
         return universe.cells;
     };
 
-    // this starts the game in a loop
+    // this starts the game in a loop for the command line output
+    // notice that only the start function is exposed to the outside.
+    // this way the synchronous variant is way quicker
     public func start() : async (){
         //we safe the state of the current universe
         var old_universe_cells : [cell] = universe.cells;
@@ -122,6 +137,8 @@ actor universe {
     };
 
     // calculate the next state of the universe
+    // this function is synchronous and only available from inside the
+    // canister or the command line
     func sync_tick(): [cell] {
         // safe the current state of the universe to "old_universe_cells"
         // so we dont overwrite old values with new values, which would chnange
