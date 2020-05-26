@@ -96,9 +96,12 @@ actor universe {
         return universe.cells;
     };
 
+    // this starts the game in a loop
     public func start() : async (){
-            var old_universe_cells : [cell] = universe.cells;
+        //we safe the state of the current universe
+        var old_universe_cells : [cell] = universe.cells;
         label draw_loop while(true){
+            // snyc 
             var temp = sync_tick();
             if (Array.equals<cell>(old_universe_cells, temp, cellEq)){
                 break draw_loop;
@@ -108,21 +111,35 @@ actor universe {
         };
     };
 
+    // a async query function, these functions return very quick as
+    // they do not alter the state of the canister
     public query func get_width(): async Nat{
         return universe.width;
     };
+
     public query func get_height(): async Nat{
         return universe.height;
     };
 
+    // calculate the next state of the universe
     func sync_tick(): [cell] {
+        // safe the current state of the universe to "old_universe_cells"
+        // so we dont overwrite old values with new values, which would chnange
+        // the overall outcome
         var old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
             universe.cells[index]
         });
+        // calculate the universe after the tick
+        // array.tabulate takes to arguments: the first is the size n of the array, the second
+        // a function that describes how to populate it for each index 0...n-1
         universe.cells := Array.tabulate<cell>((universe.width*universe.height), func(index : Nat){
             let row = get_row(index);
             let col = get_column(index);
             let live_neighbours = live_neighbour_count(row,col);
+
+            // this decides if a cell is dead or alive in the next tick
+            // depending on its neighbours. these are basically
+            // the rules of game of life written in code
             let new_state = switch (old_universe_cells[index], live_neighbours){
                 case ((#alive, 2) or (#alive, 3)){
                     #alive;
@@ -141,21 +158,25 @@ actor universe {
         return universe.cells;
     };
 
+    // get the cells array index of a cell, given the row and column 
     func get_index(row : Nat, column : Nat) : Nat {
         let index :Nat = row * universe.width + column;
         return index;
     };
 
+    // get the row of a cell in the grid
     func get_row(index : Nat) : Nat{
         let row : Nat = index / universe.width;
         return row; 
     };
 
+    // get the column of a cell in the grid
     func get_column(index : Nat) : Nat{
         let col : Nat = index % universe.height;
         return col;
     };
 
+    // this returns 1 if a cell is alive, else 0
     func get_count(idx : Nat) : Nat{
         var count = 0;
         switch (universe.cells[idx])   {
@@ -240,11 +261,12 @@ actor universe {
         count += get_count(se);
 
         // this is the total count of alive neighbour cells
-        // from the cell we are currently looking at
+        // from the cell we are currently looking at.
+        // we need this to decide the status of our cell in the next epoch
         return count;
     };
 
-    // internal method that is accessible via command line, but not from the outside
+    // internal method that is accessible via command line, but not from the outside.
     // this basically draws a grid on the command line  
     func draw(): (){
         var output : Text = "\n  ____\n";
@@ -266,7 +288,7 @@ actor universe {
         Debug.print(output#"  ____");
     };
 
-    // function that decides when two cells are equal
+    // function that decides wether two cells are equal
     func cellEq(a : cell, b : cell) : Bool {
         switch (a, b) {
             case (#dead, #dead) true;
