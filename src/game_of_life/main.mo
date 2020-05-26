@@ -3,21 +3,36 @@ import Debug "mo:base/Debug";
 import Array "mo:base/Array";
 
 actor universe {
+    // variant type declaration
+    // "#dead" is shorthand for "#dead : ()" where () is the unit type
     type cell = { #dead; #alive};
+
+    // universe object-type declaration
+    // universe is an object that consists of 3 type-fields 
+    // namely mutables with the annotated types
+    // e.g. width is a mutable of type Nat
     type universe = {
                      var width : Nat;
                      var height : Nat;
                      var cells : [cell];
                      };
  
+    // initalizing the universe of type universe
+    // this has to meet the specification of the declared time from above 
     let universe : universe ={
         var width : Nat = 0;
         var height : Nat = 0;
+        // cells functions as a flat matrix
         var cells : [cell] = []  };
 
+    // this is part of the public API, other canisters ( so called inter-canister call) and people
+    // can call this method from the outside (if they are allowed to by the canister)
+    // note the async keyword fater the arguments
     public func populate(width : Nat, height : Nat): async (){
         universe.width := width;
         universe.height := height;
+        // with this we will the array with values, those values are the 
+        // variants we declared above
         universe.cells := Array.tabulate<cell>(width*height,func(index: Nat){
             if ((index % 2 == 0) or (index % 7 == 0)){
                 #alive
@@ -154,9 +169,13 @@ actor universe {
         return count;          
     };
 
+    // this function counts the live neighbours of a cell
     func live_neighbour_count(row : Nat, column: Nat) : Nat{
         var count = 0;
 
+        // decide what north should be
+        // if we are in the first row, north should be 
+        // the row above it, which is the last row (imagine a SNAKE grid ;) )
         let north = if (row == 0) {
             universe.height - 1
         } else {
@@ -181,7 +200,22 @@ actor universe {
             column + 1
         };
 
+        // north west is the upper left cell from the cell we are looking at
+        // +-----+-------+------+
+        // | NW  |  N    |   NE |
+        // |     |       |      |
+        // +--------------------+
+        // |  W  |  XXX  |  E   |
+        // |     |  XXX  |      |
+        // +--------------------+
+        // |   SW|   S   | SE   |
+        // |     |       |      |
+        // +-----+-------+------+
+
+        // get_index() gets the index nw of the (north,west) 
+        // cell inside the cells array
         let nw = get_index(north, west);
+        // checks if the cell is dead or alive
         count += get_count(nw);
 
         let n = get_index(north, column);
@@ -205,9 +239,13 @@ actor universe {
         let se = get_index(south, east);
         count += get_count(se);
 
+        // this is the total count of alive neighbour cells
+        // from the cell we are currently looking at
         return count;
     };
 
+    // internal method that is accessible via command line, but not from the outside
+    // this basically draws a grid on the command line  
     func draw(): (){
         var output : Text = "\n  ____\n";
         for (row in Iter.range(0,universe.height-1)){
@@ -228,6 +266,7 @@ actor universe {
         Debug.print(output#"  ____");
     };
 
+    // function that decides when two cells are equal
     func cellEq(a : cell, b : cell) : Bool {
         switch (a, b) {
             case (#dead, #dead) true;
