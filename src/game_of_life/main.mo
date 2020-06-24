@@ -284,17 +284,17 @@ actor universe {
     // internal method that is accessible via command line, but not from the outside.
     // this basically draws a grid on the command line  
     func draw(): (){
-        var output : Text = "\n  ____\n";
+        var output : Text = "\n";
         for (row in Iter.range(0,universe.height-1)){
             var temp : Text = "| ";
             for (col in Iter.range(0,universe.width-1)){
                 let idx = get_index(row,col);
                 switch ( universe.cells[idx]){
                     case(#dead){
-                        temp #= "O";
+                        temp #= "◻";
                     };
                     case(#alive){
-                        temp #= "X";
+                        temp #= "◼";
                     };
                 };
             };
