@@ -1,6 +1,7 @@
 import Iter "mo:base/Iter";
 import Debug "mo:base/Debug";
 import Array "mo:base/Array";
+import Nat "mo:base/Nat";
 
 actor universe {
     // variant type declaration
