@@ -114,6 +114,7 @@ actor universe {
     public func start() : async (){
         //we safe the state of the current universe
         var old_universe_cells : [cell] = universe.cells;
+
         label draw_loop while(true){
             // snyc 
             var temp = sync_tick();
