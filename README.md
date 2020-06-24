@@ -33,7 +33,7 @@ dfx canister install --all
 
 Open the canister frontend in your web browser.
 You can either run the provided `start.sh` shellscript when on macOS our linux
-(you might need to edit the file with 'chmod +r start.sh' to be able to execute it)
+(you might need to edit the file with 'chmod +x start.sh' to be able to execute it)
 ```bash
 ./start.sh
 ```
