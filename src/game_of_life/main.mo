@@ -75,7 +75,7 @@ actor universe {
     // asynchronous tick, this alters the canisters state
     public func tick(): async [cell] {
         // we safe the old universe so we can  operate on it
-        var old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
+        let old_universe_cells = Array.tabulate<cell>(universe.width*universe.height, func(index:Nat){
             universe.cells[index]
         });
         // here we create the universe after the tick
@@ -85,7 +85,7 @@ actor universe {
         universe.cells := Array.tabulate<cell>((universe.width*universe.height), func(index : Nat){
             let row = get_row(index);
             let col = get_column(index);
-            let live_neighbours = live_neighbour_count(row,col);
+            let live_neighbours = live_neighbour_count(row,col, old_universe_cells);
             // those are basically the game of life rules written in code.
             // here it is decided wheter a cell will be dead or alive after the
             // tick
@@ -102,7 +102,7 @@ actor universe {
                 case (otherwise, _){
                     otherwise;
                 };
-            };
+            }
         });
         return universe.cells;
     };
@@ -150,7 +150,7 @@ actor universe {
         universe.cells := Array.tabulate<cell>((universe.width*universe.height), func(index : Nat){
             let row = get_row(index);
             let col = get_column(index);
-            let live_neighbours = live_neighbour_count(row,col);
+            let live_neighbours = live_neighbour_count(row,col, old_universe_cells);
 
             // this decides if a cell is dead or alive in the next tick
             // depending on its neighbours. these are basically
@@ -192,9 +192,9 @@ actor universe {
     };
 
     // this returns 1 if a cell is alive, else 0
-    func get_count(idx : Nat) : Nat{
+    func get_count(idx : Nat, old_universe_cells : [cell]) : Nat{
         var count = 0;
-        switch (universe.cells[idx])   {
+        switch (old_universe_cells[idx])   {
             case (#alive){
                 count += 1;
             };
@@ -206,7 +206,7 @@ actor universe {
     };
 
     // this function counts the live neighbours of a cell
-    func live_neighbour_count(row : Nat, column: Nat) : Nat{
+    func live_neighbour_count(row : Nat, column: Nat, old_universe_cells: [cell]) : Nat{
         var count = 0;
 
         // decide what north should be
@@ -252,28 +252,28 @@ actor universe {
         // cell inside the cells array
         let nw = get_index(north, west);
         // checks if the cell is dead or alive
-        count += get_count(nw);
+        count += get_count(nw, old_universe_cells);
 
         let n = get_index(north, column);
-        count += get_count(n);
+        count += get_count(n, old_universe_cells);
 
         let ne = get_index(north, east);
-        count += get_count(ne);
+        count += get_count(ne, old_universe_cells);
 
         let w = get_index(row, west);
-        count += get_count(w);
+        count += get_count(w, old_universe_cells);
 
         let e = get_index(row, east);
-        count += get_count(e);
+        count += get_count(e, old_universe_cells);
 
         let sw = get_index(south, west);
-        count += get_count(sw);
+        count += get_count(sw, old_universe_cells);
 
         let s = get_index(south, column);
-        count += get_count(s);
+        count += get_count(s, old_universe_cells);
 
         let se = get_index(south, east);
-        count += get_count(se);
+        count += get_count(se, old_universe_cells);
 
         // this is the total count of alive neighbour cells
         // from the cell we are currently looking at.
