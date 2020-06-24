@@ -43,7 +43,7 @@ actor universe {
     };
 
     // this renders the current state of the universe to a formatted string
-    // it is asynchronous as it doesn't alter the canisters state
+    // it is an asynchronous query as it doesn't alter the canisters state
     // only internal state is modified
     public query func render() : async Text{
         var output : Text = "\n";
@@ -63,9 +63,7 @@ actor universe {
                     output #= "◼";
                 };
             };
-
         };
-
         return output;
     };
 
