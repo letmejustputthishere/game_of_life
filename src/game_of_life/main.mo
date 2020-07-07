@@ -49,7 +49,7 @@ actor universe {
         var output : Text = "\n";
         var current_row: Nat = 0;
 
-        for (index in Iter.range(0,universe.cells.len()-1)){
+        for (index in Iter.range(0,universe.cells.size()-1)){
             
             if (get_row(index) > current_row){
                 output #= "\n";
@@ -118,7 +118,7 @@ actor universe {
         label draw_loop while(true){
             // snyc 
             var temp = sync_tick();
-            if (Array.equals<cell>(old_universe_cells, temp, cellEq)){
+            if (Array.equal<cell>(old_universe_cells, temp, cellEq)){
                 break draw_loop;
             };
             old_universe_cells := temp;
