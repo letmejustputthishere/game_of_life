@@ -17,6 +17,8 @@ dfx config --help
 
 ### Demo
 
+If you have access to the Tungsten Developer Network, this canister is available under https://7ifp6-zqcaa-aaaaa-aaaaa-caaaa-aaaaa-aaaaa-q.ic0.app/ for you to play around with. If not, follow the steps below.
+
 Install the required Node modules (only needed the first time).
 
 ```bash
