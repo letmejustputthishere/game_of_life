@@ -9,34 +9,31 @@
         "game_of_life"
       ],
       "frontend": {
-        "entrypoint": "src/game_of_life_assets/public/index.jsx",
-        "output": "canisters/game_of_life_assets/assets"
+        "entrypoint": "src/game_of_life_assets/public/index.jsx"
       },
       "source": [
-        "src/game_of_life_assets/assets"
+        "src/game_of_life_assets/assets",
+        "dist/game_of_life_assets/"
       ],
       "type": "assets"
     }
   },
   "defaults": {
     "build": {
-      "output": "canisters/",
       "packtool": ""
-    },
-    "start": {
-      "address": "127.0.0.1",
-      "port": 8000
     }
   },
-  "dfx": "0.5.10",
+  "dfx": "0.6.4",
   "networks": {
     "local": {
-      "bind": "127.0.0.1:8000"
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
     },
     "tungsten": {
       "providers": [
-        "https://gateway.dfinity.systems"
-      ]
+        "https://gw.dfinity.network"
+      ],
+      "type": "persistent"
     }
   },
   "version": 1
