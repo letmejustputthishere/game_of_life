@@ -1,4 +1,4 @@
-# game_of_life
+# Game of Life
 
 
 To learn more before you start working with game_of_life, see the following documentation available online:
@@ -27,21 +27,51 @@ Start the replica, then build and install the canisters.
 
 ```bash
 dfx start --background
+dfx canister create --all
 dfx build
 dfx canister install --all
 ```
 
 Open the canister frontend in your web browser.
 You can either run the provided `start.sh` shellscript when on macOS our linux
-(you might need to edit the file with 'chmod +x start.sh' to be able to execute it)
+(you might need to edit the file with 'chmod +x start.sh' to be able to execute it, also note that this requires **python3**)
+
 ```bash
 ./start.sh
 ```
 or you run the same steps manually
 
 ```bash
-ID=$(xxd -u -p canisters/game_of_life/_canister.id)
-CRC=$(python2 -c "import crc8;h=crc8.crc8();h.update('$ID'.decode('hex'));print(h.hexdigest())")
-xdg-open "http://127.0.0.1:8000/?canisterId=ic:$ID$CRC"
+ID=$(python3 -c "import json
+with open('.dfx/local/canister_ids.json') as ids:
+    print(json.load(ids).get('game_of_life_assets').get('local'))")
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+xdg-open "http://127.0.0.1:8000/?canisterId=$ID"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+open "http://127.0.0.1:8000/?canisterId=$ID"
+fi
 ```
+It is also possible to use `start.sh` with the  `candid` argument to view the candid interface for the backend
+
+```bash
+./start.sh candid
+```
+
+or run the same steps manually
+
+```bash
+ID=$(python3 -c "import json
+with open('.dfx/local/canister_ids.json') as ids:
+    print(json.load(ids).get('game_of_life').get('local'))")
+    
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        xdg-open "http://127.0.0.1:8000/?canisterId=$ID"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        open "http://127.0.0.1:8000/?canisterId=$ID"
+    fi
+```
+
+
+
 This is heavily inspired from [this](https://rustwasm.github.io/docs/book/game-of-life/implementing.html).
